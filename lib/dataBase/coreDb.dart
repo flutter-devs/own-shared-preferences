@@ -11,37 +11,42 @@ class CoreDb {
     return _obj;
   }
 
-//getting appliction directory : this directory will remain until you cretae your app data
+//getting appliction directory : this directory will remain until you clear your app data
 // clearing cache wont help.
-//
+
   Future<String> get _localPath async {
-    final directory = await getApplicationDocumentsDirectory();
+    final directory =
+        await getApplicationDocumentsDirectory(); //from package :path_provider
     return directory.path;
   }
 
   Future<File> get _localFile async {
     final path = await _localPath;
 
-    return File('$path/preference.json');
+    return File(
+        '$path/preference.json'); //returning file using the obtained path from path provider
   }
 
   void writeData(Map data) async {
     File file = await _localFile;
-    Map<String, dynamic> tempMap;
+    Map<String, dynamic> tempMap; //temporaray map to store data
 
     if (await file.exists()) {
-      tempMap = json.decode(file.readAsStringSync());
-      tempMap.addAll(data);
-      file.writeAsStringSync(json.encode(tempMap));
+      tempMap = json.decode(
+          file.readAsStringSync()); //storing all data in file in tempMap
+      tempMap.addAll(data); //adding data to tempMap
+      file.writeAsStringSync(json.encode(
+          tempMap)); //writing the updated data to the same file without appending
     } else {
-      file.writeAsStringSync(json.encode(data));
+      file.writeAsStringSync(
+          json.encode(data)); //if file dosent exist write it as it is
     }
   }
 
-  Future getData({String key}) async {
-    File tempFile = await _localFile;
+  Future<Map> getData({String key}) async {
+    File tempFile = await _localFile; //obtaining the file
     if (await tempFile.exists()) {
-      return json.decode(tempFile.readAsStringSync());
+      return json.decode(tempFile.readAsStringSync()); //returning Map as data
     } else
       return null;
   }
